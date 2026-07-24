@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f7c8df" />
+  <title>Fata Cretina Laureata</title>
+
+  <style>
+    :root {
+      --rosa: #f7c8df;
+      --rosa-scuro: #d86aa3;
+      --lilla: #d9c7ff;
+      --oro: #d5a63c;
+      --testo: #4a2942;
+      --bianco: #fffafc;
+      --verde: #6d9f71;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow: hidden;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--testo);
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,.85) 0 4%, transparent 5%),
+        radial-gradient(circle at 80% 30%, rgba(255,255,255,.6) 0 3%, transparent 4%),
+        linear-gradient(145deg, var(--rosa), var(--lilla));
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .scene {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      transition: opacity .8s ease, transform .8s ease;
+    }
+
+    .hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(1.04);
+    }
+
+    .card {
+      width: min(92vw, 680px);
+      text-align: center;
+      background: rgba(255, 250, 252, .84);
+      border: 1px solid rgba(255,255,255,.8);
+      border-radius: 28px;
+      padding: 34px 24px;
+      box-shadow: 0 18px 60px rgba(74, 41, 66, .18);
+      backdrop-filter: blur(10px);
+    }
+
+    .intro-title {
+      margin: 0 0 14px;
+      font-size: clamp(2rem, 8vw, 4rem);
+      line-height: 1.05;
+    }
+
+    .intro-subtitle {
+      margin: 0 0 24px;
+      font-size: clamp(1.1rem, 4vw, 1.5rem);
+    }
+
+    .start-btn,
+    .again-btn {
+      border: 0;
+      border-radius: 999px;
+      padding: 14px 24px;
+      background: var(--rosa-scuro);
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(216, 106, 163, .3);
+      transition: transform .2s ease;
+    }
+
+    .start-btn:hover,
+    .again-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .sparkle {
+      position: fixed;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: white;
+      box-shadow: 0 0 12px white;
+      animation: twinkle 2.4s infinite ease-in-out;
+      opacity: .75;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { transform: scale(.6); opacity: .35; }
+      50% { transform: scale(1.5); opacity: 1; }
+    }
+
+    .cursor {
+      display: inline-block;
+      margin-left: 4px;
+      animation: blink .8s steps(1) infinite;
+    }
+
+    @keyframes blink {
+      0%, 45% { opacity: 1; }
+      46%, 100% { opacity: 0; }
+    }
+
+    .magic-flash {
+      position: fixed;
+      inset: 0;
+      background: white;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    .magic-flash.active {
+      animation: flash .9s ease;
+    }
+
+    @keyframes flash {
+      0% { opacity: 0; }
+      35% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    .final-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .laurel {
+      width: min(65vw, 280px);
+      margin: 0 auto 10px;
+      color: var(--verde);
+      animation: growIn 1.1s ease both;
+    }
+
+    .laurel svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    @keyframes growIn {
+      from { opacity: 0; transform: scale(.5) rotate(-6deg); }
+      to { opacity: 1; transform: scale(1) rotate(0); }
+    }
+
+    .kicker {
+      margin: 4px 0;
+      font-size: clamp(1rem, 3vw, 1.2rem);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .main-title {
+      margin: 6px 0 4px;
+      font-size: clamp(2rem, 8vw, 4.2rem);
+      line-height: .95;
+      color: var(--rosa-scuro);
+      text-transform: uppercase;
+    }
+
+    .degree {
+      margin: 10px 0 22px;
+      font-size: clamp(1.25rem, 4.8vw, 2rem);
+    }
+
+    .details {
+      display: grid;
+      gap: 10px;
+      margin: 18px auto 22px;
+      max-width: 520px;
+      font-size: clamp(1rem, 3.8vw, 1.25rem);
+    }
+
+    .detail {
+      padding: 10px 14px;
+      background: rgba(255,255,255,.65);
+      border-radius: 16px;
+    }
+
+    .closing {
+      margin: 12px auto 18px;
+      max-width: 520px;
+      font-size: clamp(1rem, 3.6vw, 1.2rem);
+    }
+
+    .joke {
+      margin-top: 8px;
+      font-style: italic;
+      opacity: .8;
+    }
+
+    .fade-up {
+      opacity: 0;
+      transform: translateY(18px);
+      animation: fadeUp .8s ease forwards;
+    }
+
+    .delay-1 { animation-delay: .3s; }
+    .delay-2 { animation-delay: .7s; }
+    .delay-3 { animation-delay: 1.1s; }
+    .delay-4 { animation-delay: 1.5s; }
+    .delay-5 { animation-delay: 1.9s; }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    #confetti {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 15;
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 28px 18px;
+        border-radius: 22px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="confetti"></canvas>
+  <div class="magic-flash" id="flash"></div>
+
+  <span class="sparkle" style="top:10%;left:12%;animation-delay:.2s"></span>
+  <span class="sparkle" style="top:18%;left:82%;animation-delay:1.1s"></span>
+  <span class="sparkle" style="top:72%;left:10%;animation-delay:.7s"></span>
+  <span class="sparkle" style="top:80%;left:88%;animation-delay:1.6s"></span>
+  <span class="sparkle" style="top:42%;left:6%;animation-delay:1.9s"></span>
+  <span class="sparkle" style="top:55%;left:92%;animation-delay:.4s"></span>
+
+  <section class="scene" id="introScene">
+    <div class="card">
+      <h1 class="intro-title"><span id="typewriter"></span><span class="cursor" aria-hidden="true">|</span></h1>
+      <p class="intro-subtitle" id="introSubtitle"></p>
+      <button class="start-btn" id="startBtn" type="button">
+        Scopri cosa è successo
+      </button>
+    </div>
+  </section>
+
+  <section class="scene hidden" id="finalScene" aria-live="polite">
+    <div class="card final-card">
+      <div class="laurel">
+        <svg viewBox="0 0 300 180" role="img" aria-label="Corona d'alloro">
+          <path d="M92 150 C40 110 36 52 77 20" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+          <path d="M208 150 C260 110 264 52 223 20" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+
+          <g fill="currentColor">
+            <ellipse cx="76" cy="132" rx="10" ry="22" transform="rotate(-48 76 132)"/>
+            <ellipse cx="60" cy="108" rx="10" ry="22" transform="rotate(-62 60 108)"/>
+            <ellipse cx="55" cy="80" rx="10" ry="22" transform="rotate(-78 55 80)"/>
+            <ellipse cx="61" cy="51" rx="10" ry="22" transform="rotate(-96 61 51)"/>
+            <ellipse cx="78" cy="29" rx="10" ry="22" transform="rotate(-118 78 29)"/>
+
+            <ellipse cx="224" cy="132" rx="10" ry="22" transform="rotate(48 224 132)"/>
+            <ellipse cx="240" cy="108" rx="10" ry="22" transform="rotate(62 240 108)"/>
+            <ellipse cx="245" cy="80" rx="10" ry="22" transform="rotate(78 245 80)"/>
+            <ellipse cx="239" cy="51" rx="10" ry="22" transform="rotate(96 239 51)"/>
+            <ellipse cx="222" cy="29" rx="10" ry="22" transform="rotate(118 222 29)"/>
+          </g>
+
+          <path d="M120 154 Q150 170 180 154" fill="none" stroke="#d5a63c" stroke-width="8" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+            <h2 class="main-title fade-up delay-2">Fata Cretina Laureata</h2>
+      <p class="degree fade-up delay-3">
+        Dottoressa in Ingegneria Informatica 🎓
+      </p>
+
+      <div class="details fade-up delay-4">
+        <div class="detail">📅 <strong>30 luglio 2026</strong></div>
+        <div class="detail">🕦 <strong>Ore 11:45</strong></div>
+        <div class="detail">
+          📍 <strong>Aula Magna del Dipartimento di Ingegneria</strong><br>
+          Edificio 7
+        </div>
+      </div>
+
+      <div class="closing fade-up delay-5">
+        Vi aspetto per condividere con me questo momento speciale.
+        <div class="joke">
+          L’assenza sarà valutata molto severamente dalla Fata Cretina.
+        </div>
+      </div>
+
+      <button class="again-btn fade-up delay-5" id="againBtn" type="button">
+        Rivedi la magia
+      </button>
+    </div>
+  </section>
+
+  <script>
+    const introScene = document.getElementById("introScene");
+    const finalScene = document.getElementById("finalScene");
+    const startBtn = document.getElementById("startBtn");
+    const againBtn = document.getElementById("againBtn");
+    const flash = document.getElementById("flash");
+    const typewriter = document.getElementById("typewriter");
+    const introSubtitle = document.getElementById("introSubtitle");
+
+    const firstLine = "C’era una volta…";
+    const secondLine = "una Fata Cretina. ✨";
+
+    function typeText(element, text, speed, callback) {
+      element.textContent = "";
+      let index = 0;
+
+      const timer = setInterval(() => {
+        element.textContent += text.charAt(index);
+        index += 1;
+
+        if (index >= text.length) {
+          clearInterval(timer);
+          if (callback) callback();
+        }
+      }, speed);
+    }
+
+    function startIntroAnimation() {
+      introSubtitle.textContent = "";
+      typeText(typewriter, firstLine, 120, () => {
+        setTimeout(() => {
+          typeText(introSubtitle, secondLine, 90);
+        }, 650);
+      });
+    }
+
+    startIntroAnimation();
+
+    function playMagicSound() {
+      try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioContextClass();
+        const now = ctx.currentTime;
+
+        [660, 880, 1100].forEach((frequency, index) => {
+          const oscillator = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          oscillator.type = "sine";
+          oscillator.frequency.value = frequency;
+
+          gain.gain.setValueAtTime(0, now + index * 0.12);
+          gain.gain.linearRampToValueAtTime(0.15, now + index * 0.12 + 0.03);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + index * 0.12 + 0.45);
+
+          oscillator.connect(gain);
+          gain.connect(ctx.destination);
+
+          oscillator.start(now + index * 0.12);
+          oscillator.stop(now + index * 0.12 + 0.5);
+        });
+      } catch (error) {
+        console.log("Audio non disponibile.");
+      }
+    }
+
+    function showFinalScene() {
+      playMagicSound();
+      flash.classList.remove("active");
+      void flash.offsetWidth;
+      flash.classList.add("active");
+
+      setTimeout(() => {
+        introScene.classList.add("hidden");
+        finalScene.classList.remove("hidden");
+        startConfetti();
+      }, 350);
+    }
+
+    function resetAnimation() {
+      stopConfetti();
+      finalScene.classList.add("hidden");
+      introScene.classList.remove("hidden");
+      startIntroAnimation();
+
+      document.querySelectorAll(".fade-up").forEach((element) => {
+        element.style.animation = "none";
+        void element.offsetWidth;
+        element.style.animation = "";
+      });
+    }
+
+    startBtn.addEventListener("click", showFinalScene);
+    againBtn.addEventListener("click", resetAnimation);
+
+    const canvas = document.getElementById("confetti");
+    const ctx = canvas.getContext("2d");
+    let pieces = [];
+    let animationFrame = null;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth * window.devicePixelRatio;
+      canvas.height = window.innerHeight * window.devicePixelRatio;
+      canvas.style.width = window.innerWidth + "px";
+      canvas.style.height = window.innerHeight + "px";
+      ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
+    }
+
+    function createConfetti() {
+      const colors = ["#d86aa3", "#d5a63c", "#ffffff", "#8f73c8", "#6d9f71"];
+
+      pieces = Array.from({ length: 150 }, () => ({
+        x: Math.random() * window.innerWidth,
+        y: -20 - Math.random() * window.innerHeight * 0.6,
+        size: 6 + Math.random() * 8,
+        speedY: 2 + Math.random() * 4,
+        speedX: -1.5 + Math.random() * 3,
+        rotation: Math.random() * Math.PI,
+        rotationSpeed: -0.1 + Math.random() * 0.2,
+        color: colors[Math.floor(Math.random() * colors.length)]
+      }));
+    }
+
+    function drawConfetti() {
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+      pieces.forEach((piece) => {
+        piece.x += piece.speedX;
+        piece.y += piece.speedY;
+        piece.rotation += piece.rotationSpeed;
+
+        ctx.save();
+        ctx.translate(piece.x, piece.y);
+        ctx.rotate(piece.rotation);
+        ctx.fillStyle = piece.color;
+        ctx.fillRect(-piece.size / 2, -piece.size / 2, piece.size, piece.size * 0.55);
+        ctx.restore();
+      });
+
+      pieces = pieces.filter((piece) => piece.y < window.innerHeight + 30);
+
+      if (pieces.length > 0) {
+        animationFrame = requestAnimationFrame(drawConfetti);
+      }
+    }
+
+    function startConfetti() {
+      resizeCanvas();
+      createConfetti();
+      cancelAnimationFrame(animationFrame);
+      drawConfetti();
+    }
+
+    function stopConfetti() {
+      cancelAnimationFrame(animationFrame);
+      pieces = [];
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    }
+
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+  </script>
+</body>
+</html>
